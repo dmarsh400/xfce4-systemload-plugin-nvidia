@@ -9,8 +9,8 @@
 
 gulong read_gpu0load()
 {
-    /* Use the known working path for rocm-smi */
-    const char *command = "/opt/rocm-6.0.0/bin/rocm-smi --showuse 2>/dev/null";
+    /* Use nvidia-smi for Nvidia GPU monitoring */
+    const char *command = "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null";
     
     FILE *fp = popen(command, "r");
     if (!fp) {
@@ -19,16 +19,8 @@ gulong read_gpu0load()
     
     char buffer[256];
     gulong usage = 0;
-    int gpu_count = 0;
-    while (fgets(buffer, sizeof(buffer), fp) != NULL && gpu_count < 2) {
-        char *pos = strstr(buffer, "GPU use (%): ");
-        if (pos) {
-            pos += strlen("GPU use (%): ");
-            if (gpu_count == 0) {
-                usage = atoi(pos);
-            }
-            gpu_count++;
-        }
+    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        usage = atoi(buffer);
     }
     pclose(fp);
     return usage;
@@ -36,8 +28,8 @@ gulong read_gpu0load()
 
 gulong read_gpu1load()
 {
-    /* Use the known working path for rocm-smi */
-    const char *command = "/opt/rocm-6.0.0/bin/rocm-smi --showuse 2>/dev/null";
+    /* Use nvidia-smi for Nvidia GPU monitoring */
+    const char *command = "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null";
     
     FILE *fp = popen(command, "r");
     if (!fp) {
@@ -48,14 +40,11 @@ gulong read_gpu1load()
     gulong usage = 0;
     int gpu_count = 0;
     while (fgets(buffer, sizeof(buffer), fp) != NULL && gpu_count < 2) {
-        char *pos = strstr(buffer, "GPU use (%): ");
-        if (pos) {
-            pos += strlen("GPU use (%): ");
-            if (gpu_count == 1) {
-                usage = atoi(pos);
-            }
-            gpu_count++;
+        if (gpu_count == 1) {
+            usage = atoi(buffer);
+            break;
         }
+        gpu_count++;
     }
     pclose(fp);
     return usage;

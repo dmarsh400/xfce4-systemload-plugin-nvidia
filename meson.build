@@ -1,5 +1,5 @@
 project(
-  'xfce4-systemload-plugin',
+  'xfce4-systemload-plugin-nvidia',
   'c',
   'cpp',
 version : '1.4.0-dev',

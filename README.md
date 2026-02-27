@@ -1,7 +1,7 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](https://gitlab.xfce.org/panel-plugins/xfce4-systemload-plugin/-/blob/master/COPYING)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://gitlab.xfce.org/panel-plugins/xfce4-systemload-plugin/-/blob/master/COPYING)
 
-# xfce4-systemload-plugin-gpu
+# xfce4-systemload-plugin-nvidia
 
 xfce4-systemload-plugin displays current CPU load, memory in use, network utilization, swap space, system uptime, and **GPU utilization** in xfce4-panel.
 
@@ -12,22 +12,22 @@ xfce4-systemload-plugin displays current CPU load, memory in use, network utiliz
 - **Network Traffic**: Display network I/O rates
 - **Swap Usage**: Monitor swap space utilization
 - **System Uptime**: Show system uptime
-- **GPU Monitoring**: Real-time AMD GPU utilization (GPU0/GPU1) via ROCm
+- **GPU Monitoring**: Real-time Nvidia GPU utilization (GPU0/GPU1) via nvidia-smi
 
 ## GPU Support
 
-This enhanced version includes integrated GPU monitoring for AMD GPUs using ROCm:
+This enhanced version includes integrated GPU monitoring for Nvidia GPUs using nvidia-smi:
 
-- **GPU0/GPU1 Support**: Monitor multiple AMD GPUs simultaneously
-- **ROCm Integration**: Uses `rocm-smi --showuse` for accurate readings
+- **GPU0/GPU1 Support**: Monitor multiple Nvidia GPUs simultaneously
+- **nvidia-smi Integration**: Uses `nvidia-smi --query-gpu=utilization.gpu` for accurate readings
 - **Real-time Updates**: Live GPU utilization tracking
 - **Configurable**: Enable/disable individual GPU monitors
 - **Visual Indicators**: Distinct colors for each GPU (GPU0: dark red, GPU1: purple)
 
 ### Requirements for GPU Monitoring
 
-- AMD GPU with ROCm installed
-- `rocm-smi` command available (typically at `/opt/rocm-*/bin/rocm-smi`)
+- Nvidia GPU with Nvidia drivers installed
+- `nvidia-smi` command available (typically in `/usr/bin/nvidia-smi`)
 
 ## Installation
 
@@ -60,7 +60,7 @@ From source:
 - **libxfce4ui**
 - **libxfce4util**
 - **xfconf**
-- **AMD GPU + ROCm** (for GPU monitoring)
+- **Nvidia GPU + Nvidia drivers** (for GPU monitoring)
 
 ## Screenshots
 
@@ -75,7 +75,7 @@ BSD-2-Clause (original) + GPL-2.0-or-later (enhancements)
 
 ## Development
 
-This is an enhanced version of the official XFCE system load plugin with integrated GPU monitoring. For a standalone GPU graph plugin, see [xfce4-gpugraph-plugin](https://github.com/dmarsh400/xfce4-gpugraph-plugin).
+This is an enhanced version of the official XFCE system load plugin with integrated Nvidia GPU monitoring. For a standalone GPU graph plugin, see [xfce4-gpugraph-plugin-nvidia](https://github.com/dmarsh400/xfce4-gpugraph-plugin-nvidia).
 
 ### Homepage
 
