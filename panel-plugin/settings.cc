@@ -101,7 +101,7 @@ struct _SystemloadConfig {
     bool           use_label;
     gchar         *label;
     GdkRGBA        color;
-  } monitor[6];
+  } monitor[8];
 };
 
 enum SystemloadProperty {
