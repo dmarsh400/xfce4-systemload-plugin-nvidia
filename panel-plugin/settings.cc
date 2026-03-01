@@ -51,6 +51,8 @@ static const gchar *const DEFAULT_LABEL[] = {
     "swap",
     "gpu0",
     "gpu1",
+    "vram0",
+    "vram1",
 };
 
 static const gchar *const DEFAULT_COLOR[] = {
@@ -60,6 +62,8 @@ static const gchar *const DEFAULT_COLOR[] = {
     "#f5c211", /* SWAP */
     "#a51d2d", /* GPU0 */
     "#613583", /* GPU1 */
+    "#8b0000", /* VRAM0 */
+    "#4b0082", /* VRAM1 */
 };
 
 
@@ -131,6 +135,14 @@ enum SystemloadProperty {
     PROP_GPU1_USE_LABEL,
     PROP_GPU1_LABEL,
     PROP_GPU1_COLOR,
+    PROP_VRAM0_ENABLED,
+    PROP_VRAM0_USE_LABEL,
+    PROP_VRAM0_LABEL,
+    PROP_VRAM0_COLOR,
+    PROP_VRAM1_ENABLED,
+    PROP_VRAM1_USE_LABEL,
+    PROP_VRAM1_LABEL,
+    PROP_VRAM1_COLOR,
     N_PROPERTIES,
 };
 
@@ -176,6 +188,16 @@ prop2monitor (SystemloadProperty p)
     case PROP_GPU1_LABEL:
     case PROP_GPU1_COLOR:
       return GPU1_MONITOR;
+    case PROP_VRAM0_ENABLED:
+    case PROP_VRAM0_USE_LABEL:
+    case PROP_VRAM0_LABEL:
+    case PROP_VRAM0_COLOR:
+      return VRAM0_MONITOR;
+    case PROP_VRAM1_ENABLED:
+    case PROP_VRAM1_USE_LABEL:
+    case PROP_VRAM1_LABEL:
+    case PROP_VRAM1_COLOR:
+      return VRAM1_MONITOR;
     default:
       /* Ideally, this codepath is never reached */
       return CPU_MONITOR;
@@ -409,6 +431,56 @@ systemload_config_class_init (SystemloadConfigClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_GPU1_COLOR,
                                    g_param_spec_boxed ("gpu1-color",
+                                                       NULL, NULL,
+                                                       GDK_TYPE_RGBA,
+                                                       GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM0_ENABLED,
+                                   g_param_spec_boolean ("vram0-enabled", NULL, NULL,
+                                                         FALSE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM0_USE_LABEL,
+                                   g_param_spec_boolean ("vram0-use-label", NULL, NULL,
+                                                         TRUE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM0_LABEL,
+                                   g_param_spec_string ("vram0-label", NULL, NULL,
+                                                        DEFAULT_LABEL[VRAM0_MONITOR],
+                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM0_COLOR,
+                                   g_param_spec_boxed ("vram0-color",
+                                                       NULL, NULL,
+                                                       GDK_TYPE_RGBA,
+                                                       GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM1_ENABLED,
+                                   g_param_spec_boolean ("vram1-enabled", NULL, NULL,
+                                                         FALSE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM1_USE_LABEL,
+                                   g_param_spec_boolean ("vram1-use-label", NULL, NULL,
+                                                         TRUE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM1_LABEL,
+                                   g_param_spec_string ("vram1-label", NULL, NULL,
+                                                        DEFAULT_LABEL[VRAM1_MONITOR],
+                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_VRAM1_COLOR,
+                                   g_param_spec_boxed ("vram1-color",
                                                        NULL, NULL,
                                                        GDK_TYPE_RGBA,
                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));

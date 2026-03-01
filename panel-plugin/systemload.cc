@@ -96,7 +96,7 @@ struct t_global_monitor {
     bool              use_timeout_seconds;
     guint             timeout_id;
     t_command         command;
-    t_monitor         *monitor[6];
+    t_monitor         *monitor[8];
     t_uptime_monitor  uptime;
 #ifdef HAVE_UPOWER_GLIB
     UpClient          *upower;
@@ -112,6 +112,8 @@ static const SystemloadMonitor VISUAL_ORDER[] = {
     NET_MONITOR,
     GPU0_MONITOR,
     GPU1_MONITOR,
+    VRAM0_MONITOR,
+    VRAM1_MONITOR,
 };
 
 static gboolean setup_monitor_cb(gpointer user_data);
@@ -217,6 +219,10 @@ update_monitors(t_global_monitor *global)
         global->monitor[GPU0_MONITOR]->value_read = read_gpu0load();
     if (systemload_config_get_enabled (config, GPU1_MONITOR))
         global->monitor[GPU1_MONITOR]->value_read = read_gpu1load();
+    if (systemload_config_get_enabled (config, VRAM0_MONITOR))
+        global->monitor[VRAM0_MONITOR]->value_read = read_vram0usage();
+    if (systemload_config_get_enabled (config, VRAM1_MONITOR))
+        global->monitor[VRAM1_MONITOR]->value_read = read_vram1usage();
     if (systemload_config_get_uptime_enabled (config))
         global->uptime.value_read = read_uptime();
 
@@ -277,6 +283,20 @@ update_monitors(t_global_monitor *global)
         gchar tooltip[128];
         g_snprintf(tooltip, sizeof(tooltip), _("GPU1 Load: %ld%%"), global->monitor[GPU1_MONITOR]->value_read);
         set_tooltip(global->monitor[GPU1_MONITOR]->ebox, tooltip);
+    }
+
+    if (systemload_config_get_enabled (config, VRAM0_MONITOR))
+    {
+        gchar tooltip[128];
+        g_snprintf(tooltip, sizeof(tooltip), _("VRAM0 Usage: %ld%%"), global->monitor[VRAM0_MONITOR]->value_read);
+        set_tooltip(global->monitor[VRAM0_MONITOR]->ebox, tooltip);
+    }
+
+    if (systemload_config_get_enabled (config, VRAM1_MONITOR))
+    {
+        gchar tooltip[128];
+        g_snprintf(tooltip, sizeof(tooltip), _("VRAM1 Usage: %ld%%"), global->monitor[VRAM1_MONITOR]->value_read);
+        set_tooltip(global->monitor[VRAM1_MONITOR]->ebox, tooltip);
     }
 
     if (systemload_config_get_uptime_enabled (config))

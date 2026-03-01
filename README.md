@@ -13,16 +13,18 @@ xfce4-systemload-plugin displays current CPU load, memory in use, network utiliz
 - **Swap Usage**: Monitor swap space utilization
 - **System Uptime**: Show system uptime
 - **GPU Monitoring**: Real-time Nvidia GPU utilization (GPU0/GPU1) via nvidia-smi
+- **VRAM Monitoring**: Real-time Nvidia GPU memory usage (VRAM0/VRAM1) via nvidia-smi
 
 ## GPU Support
 
 This enhanced version includes integrated GPU monitoring for Nvidia GPUs using nvidia-smi:
 
 - **GPU0/GPU1 Support**: Monitor multiple Nvidia GPUs simultaneously
-- **nvidia-smi Integration**: Uses `nvidia-smi --query-gpu=utilization.gpu` for accurate readings
-- **Real-time Updates**: Live GPU utilization tracking
-- **Configurable**: Enable/disable individual GPU monitors
-- **Visual Indicators**: Distinct colors for each GPU (GPU0: dark red, GPU1: purple)
+- **VRAM0/VRAM1 Support**: Monitor VRAM usage for multiple Nvidia GPUs
+- **nvidia-smi Integration**: Uses `nvidia-smi --query-gpu=utilization.gpu` and `nvidia-smi --query-gpu=memory.used,memory.total` for accurate readings
+- **Real-time Updates**: Live GPU utilization and VRAM usage tracking
+- **Configurable**: Enable/disable individual GPU and VRAM monitors
+- **Visual Indicators**: Distinct colors for each GPU (GPU0: dark red, GPU1: purple) and VRAM (VRAM0: dark red, VRAM1: dark purple)
 
 ### Requirements for GPU Monitoring
 
@@ -42,12 +44,12 @@ From source:
 
 1. Add the "System Load Monitor" plugin to your Xfce panel
 2. Right-click the plugin → Properties to configure which monitors to display
-3. Enable GPU0/GPU1 monitoring as desired
+3. Enable GPU0/GPU1 and VRAM0/VRAM1 monitoring as desired
 4. Customize colors and labels for each monitor type
 
 ## Configuration
 
-- **Monitor Selection**: Enable/disable CPU, Memory, Network, Swap, GPU0, GPU1
+- **Monitor Selection**: Enable/disable CPU, Memory, Network, Swap, GPU0, GPU1, VRAM0, VRAM1
 - **Colors**: Customize colors for each monitor type
 - **Labels**: Show/hide text labels for each monitor
 - **Update Interval**: Adjust refresh rate (default: 500ms)
@@ -67,7 +69,7 @@ From source:
 ### System Load Monitor with GPU Support
 ![Enhanced System Load Monitor](Enchanced%20system%20loadpng)
 
-*Shows the enhanced system load monitor displaying CPU, Memory, Network, Swap, and GPU0/GPU1 utilization with distinct colors for each monitor type.*
+*Shows the enhanced system load monitor displaying CPU, Memory, Network, Swap, GPU0/GPU1 utilization, and VRAM0/VRAM1 usage with distinct colors for each monitor type.*
 
 ## License
 

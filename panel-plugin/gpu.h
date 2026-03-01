@@ -9,5 +9,7 @@
 
 gulong read_gpu0load();
 gulong read_gpu1load();
+gulong read_vram0usage();
+gulong read_vram1usage();
 
 #endif /* _XFCE_SYSTEMLOAD_GPU_H_ */
