@@ -1,9 +1,9 @@
 [Xfce Panel]
 Type=X-XFCE-PanelPlugin
 Encoding=UTF-8
-Name=System Load Monitor
-Comment=Monitor CPU load, swap usage, memory footprint and network usage
+Name=System Load Monitor (Nvidia)
+Comment=Monitor CPU load, swap usage, memory footprint, network usage and Nvidia GPU/VRAM
 Icon=org.xfce.panel.systemload
-X-XFCE-Module=systemload
+X-XFCE-Module=systemload-nvidia
 X-XFCE-Internal=false
 X-XFCE-API=2.0

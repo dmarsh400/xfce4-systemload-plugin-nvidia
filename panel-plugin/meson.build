@@ -20,11 +20,11 @@ plugin_sources = [
 plugin_install_subdir = 'xfce4' / 'panel' / 'plugins'
 
 plugin_lib = shared_module(
-  'systemload',
+  'systemload-nvidia',
   plugin_sources,
   gnu_symbol_visibility: 'hidden',
   c_args: [
-    '-DG_LOG_DOMAIN="@0@"'.format('xfce4-systemload-plugin'),
+    '-DG_LOG_DOMAIN="@0@"'.format('xfce4-systemload-plugin-nvidia'),
   ],
   include_directories: [
     include_directories('..'),
