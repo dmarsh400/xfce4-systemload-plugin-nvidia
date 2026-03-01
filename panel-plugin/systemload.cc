@@ -662,12 +662,18 @@ command_entry_changed_cb(GtkEntry *entry, t_global_monitor *global)
 }
 
 static void
-switch_cb(GtkSwitch *check_button, gboolean state, t_global_monitor *global)
+switch_cb(GtkSwitch *check_button, t_global_monitor *global)
 {
     gpointer sensitive_widget = g_object_get_data (G_OBJECT (check_button), "sensitive_widget");
-    gtk_switch_set_state (check_button, state);
+    gboolean state = gtk_switch_get_active (check_button);
     if (sensitive_widget)
         gtk_revealer_set_reveal_child (GTK_REVEALER (sensitive_widget), state);
+}
+
+static void
+switch_active_changed_cb (GObject *object, GParamSpec *pspec, t_global_monitor *global)
+{
+    switch_cb (GTK_SWITCH (object), global);
 }
 
 static void
@@ -735,8 +741,8 @@ new_monitor_setting (t_global_monitor *global,
     g_object_bind_property (G_OBJECT (global->config), setting_name,
                             G_OBJECT (sw), "active",
                             GBindingFlags (G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL));
-    g_signal_connect (GTK_WIDGET(sw), "state-set",
-                      G_CALLBACK(switch_cb), global);
+    g_signal_connect (G_OBJECT (sw), "notify::active",
+                      G_CALLBACK (switch_active_changed_cb), global);
     g_free (setting_name);
 
     markup = g_markup_printf_escaped ("<b>%s</b>", title);
@@ -775,6 +781,14 @@ new_monitor_setting (t_global_monitor *global,
     g_object_bind_property (G_OBJECT (global->config), setting_name,
                             G_OBJECT (entry), "text",
                             GBindingFlags (G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL));
+    
+    /* Explicitly set the entry text */
+    gchar *label_text = NULL;
+    g_object_get (G_OBJECT (global->config), setting_name, &label_text, NULL);
+    if (label_text)
+        gtk_entry_set_text (GTK_ENTRY (entry), label_text);
+    g_free (label_text);
+
     g_free (setting_name);
     gtk_grid_attach(GTK_GRID(subgrid), entry, 1, 0, 1, 1);
 
@@ -791,11 +805,19 @@ new_monitor_setting (t_global_monitor *global,
         g_object_bind_property (G_OBJECT (global->config), setting_name,
                                 G_OBJECT (button), "rgba",
                                 GBindingFlags (G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL));
+
+        /* Explicitly set the color button */
+        GdkRGBA *color_rgba = NULL;
+        g_object_get (G_OBJECT (global->config), setting_name, &color_rgba, NULL);
+        if (color_rgba)
+            gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (button), color_rgba);
+        g_boxed_free (GDK_TYPE_RGBA, color_rgba);
+
         g_free (setting_name);
         gtk_grid_attach(GTK_GRID(subgrid), button, 2, 0, 1, 1);
     }
 
-    switch_cb (GTK_SWITCH (sw), enabled, global);
+    switch_cb (GTK_SWITCH (sw), global);
 }
 
 static void

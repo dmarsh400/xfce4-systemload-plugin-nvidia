@@ -570,6 +570,8 @@ systemload_config_get_property (GObject    *object,
     case PROP_SWAP_ENABLED:
     case PROP_GPU0_ENABLED:
     case PROP_GPU1_ENABLED:
+    case PROP_VRAM0_ENABLED:
+    case PROP_VRAM1_ENABLED:
       g_value_set_boolean (value, config->monitor[prop2monitor(prop_id)].enabled);
       break;
 
@@ -579,6 +581,8 @@ systemload_config_get_property (GObject    *object,
     case PROP_SWAP_USE_LABEL:
     case PROP_GPU0_USE_LABEL:
     case PROP_GPU1_USE_LABEL:
+    case PROP_VRAM0_USE_LABEL:
+    case PROP_VRAM1_USE_LABEL:
       g_value_set_boolean (value, config->monitor[prop2monitor(prop_id)].use_label);
       break;
 
@@ -588,6 +592,8 @@ systemload_config_get_property (GObject    *object,
     case PROP_SWAP_LABEL:
     case PROP_GPU0_LABEL:
     case PROP_GPU1_LABEL:
+    case PROP_VRAM0_LABEL:
+    case PROP_VRAM1_LABEL:
       g_value_set_string (value, config->monitor[prop2monitor(prop_id)].label);
       break;
 
@@ -597,6 +603,8 @@ systemload_config_get_property (GObject    *object,
     case PROP_SWAP_COLOR:
     case PROP_GPU0_COLOR:
     case PROP_GPU1_COLOR:
+    case PROP_VRAM0_COLOR:
+    case PROP_VRAM1_COLOR:
       g_value_set_boxed (value, &config->monitor[prop2monitor(prop_id)].color);
       break;
 

@@ -35,7 +35,7 @@ This enhanced version includes integrated GPU monitoring for Nvidia GPUs using n
 
 From source:
 
-    % cd xfce4-systemload-plugin-gpu
+    % cd xfce4-systemload-plugin-nvidia
     % meson setup build
     % meson compile -C build
     % meson install -C build
@@ -67,9 +67,9 @@ From source:
 ## Screenshots
 
 ### System Load Monitor with GPU Support
-![Enhanced System Load Monitor](Enchanced%20system%20loadpng)
+![Enhanced System Load Monitor](Screenshot%20for%20Github.png)
 
-*Shows the enhanced system load monitor displaying CPU, Memory, Network, Swap, GPU0/GPU1 utilization, and VRAM0/VRAM1 usage with distinct colors for each monitor type.*
+*Shows the enhanced system load monitor displaying CPU, Memory, Network, Swap, GPU0/GPU1 utilization, and VRAM0/VRAM1 usage with persistent labels, colors, and monitor toggles.*
 
 ## License
 
