@@ -950,6 +950,90 @@ systemload_config_set_property (GObject      *object,
       g_boxed_free (GDK_TYPE_RGBA, val_rgba);
       break;
 
+    case PROP_VRAM0_ENABLED:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[VRAM0_MONITOR].enabled != val_bool)
+        {
+          config->monitor[VRAM0_MONITOR].enabled = val_bool;
+          g_object_notify (G_OBJECT (config), "vram0-enabled");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM0_USE_LABEL:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[VRAM0_MONITOR].use_label != val_bool)
+        {
+          config->monitor[VRAM0_MONITOR].use_label = val_bool;
+          g_object_notify (G_OBJECT (config), "vram0-use-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM0_LABEL:
+      val_string = g_value_get_string (value);
+      if (g_strcmp0 (config->monitor[VRAM0_MONITOR].label, val_string) != 0)
+        {
+          g_free (config->monitor[VRAM0_MONITOR].label);
+          config->monitor[VRAM0_MONITOR].label = g_value_dup_string (value);
+          g_object_notify (G_OBJECT (config), "vram0-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM0_COLOR:
+      val_rgba = (GdkRGBA*) g_value_dup_boxed (value);
+      if (!rgba_equal (config->monitor[VRAM0_MONITOR].color, *val_rgba))
+        {
+          config->monitor[VRAM0_MONITOR].color = *val_rgba;
+          g_object_notify (G_OBJECT (config), "vram0-color");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      g_boxed_free (GDK_TYPE_RGBA, val_rgba);
+      break;
+
+    case PROP_VRAM1_ENABLED:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[VRAM1_MONITOR].enabled != val_bool)
+        {
+          config->monitor[VRAM1_MONITOR].enabled = val_bool;
+          g_object_notify (G_OBJECT (config), "vram1-enabled");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM1_USE_LABEL:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[VRAM1_MONITOR].use_label != val_bool)
+        {
+          config->monitor[VRAM1_MONITOR].use_label = val_bool;
+          g_object_notify (G_OBJECT (config), "vram1-use-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM1_LABEL:
+      val_string = g_value_get_string (value);
+      if (g_strcmp0 (config->monitor[VRAM1_MONITOR].label, val_string) != 0)
+        {
+          g_free (config->monitor[VRAM1_MONITOR].label);
+          config->monitor[VRAM1_MONITOR].label = g_value_dup_string (value);
+          g_object_notify (G_OBJECT (config), "vram1-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_VRAM1_COLOR:
+      val_rgba = (GdkRGBA*) g_value_dup_boxed (value);
+      if (!rgba_equal (config->monitor[VRAM1_MONITOR].color, *val_rgba))
+        {
+          config->monitor[VRAM1_MONITOR].color = *val_rgba;
+          g_object_notify (G_OBJECT (config), "vram1-color");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      g_boxed_free (GDK_TYPE_RGBA, val_rgba);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
