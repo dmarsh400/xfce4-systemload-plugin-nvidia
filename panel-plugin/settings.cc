@@ -1256,6 +1256,38 @@ systemload_config_new (const gchar *property_base)
       property = g_strconcat (property_base, "/gpu1/color", NULL);
       xfconf_g_property_bind_gdkrgba (channel, property, config, "gpu1-color");
       g_free (property);
+
+      property = g_strconcat (property_base, "/vram0/enabled", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "vram0-enabled");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram0/use-label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "vram0-use-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram0/label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_STRING, config, "vram0-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram0/color", NULL);
+      xfconf_g_property_bind_gdkrgba (channel, property, config, "vram0-color");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram1/enabled", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "vram1-enabled");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram1/use-label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "vram1-use-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram1/label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_STRING, config, "vram1-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/vram1/color", NULL);
+      xfconf_g_property_bind_gdkrgba (channel, property, config, "vram1-color");
+      g_free (property);
     }
 
   return config;
