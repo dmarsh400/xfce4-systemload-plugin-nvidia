@@ -811,6 +811,8 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
             N_ ("Swap monitor"),
             N_ ("GPU0 monitor"),
             N_ ("GPU1 monitor"),
+            N_ ("VRAM0 monitor"),
+            N_ ("VRAM1 monitor"),
             N_ ("Uptime monitor")
     };
     static const gchar *SETTING_TEXT[] = {
@@ -819,7 +821,9 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
             "network",
             "swap",
             "gpu0",
-            "gpu1"
+            "gpu1",
+            "vram0",
+            "vram1"
     };
 
     GtkWidget *dlg;
@@ -916,7 +920,7 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
 
     /* Uptime monitor options */
     new_monitor_setting (global, GTK_GRID(grid), 4 + 2*G_N_ELEMENTS (global->monitor),
-                         _(FRAME_TEXT[6]), FALSE, "uptime");
+                         _(FRAME_TEXT[8]), FALSE, "uptime");
 
     gtk_widget_show_all (dlg);
 }
