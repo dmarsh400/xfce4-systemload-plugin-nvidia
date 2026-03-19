@@ -35,10 +35,11 @@ This enhanced version includes integrated GPU monitoring for Nvidia GPUs using n
 
 From source:
 
+    % sudo apt install meson ninja-build build-essential libxfce4panel-2.0-dev
     % cd xfce4-systemload-plugin-nvidia
     % meson setup build
     % meson compile -C build
-    % meson install -C build
+    % sudo meson install -C build
 
 ## Usage
 
