@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: xfce4-systemload-plugin-nvidia
+License: BSD-2-Clause
+
+Files: *
+Copyright: 2025 jmartin
+License: BSD-2-Clause
+
+License: BSD-2-Clause
+ See COPYING for the full license text.

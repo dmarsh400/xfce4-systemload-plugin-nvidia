@@ -1,0 +1,27 @@
+Source: xfce4-systemload-plugin-nvidia
+Section: xfce
+Priority: optional
+Maintainer: jmartin <jmartin@localhost>
+Build-Depends:
+ debhelper-compat (= 13),
+ meson,
+ pkg-config,
+ libglib2.0-dev,
+ libgtk-3-dev,
+ libxfce4panel-2.0-dev,
+ libxfce4ui-2-dev,
+ libxfce4util-dev,
+ libxfconf-0-dev,
+ libgtop2-dev,
+ libupower-glib-dev,
+Standards-Version: 4.6.2
+
+Package: xfce4-systemload-plugin-nvidia
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: xfce4-systemload-plugin
+Conflicts: xfce4-systemload-plugin
+Replaces: xfce4-systemload-plugin
+Description: System load monitor plugin for Xfce panel with NVIDIA GPU support
+ A system load monitor plugin for the Xfce panel with added support for
+ monitoring NVIDIA GPU utilization and VRAM usage via nvidia-smi.
