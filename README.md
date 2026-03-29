@@ -41,6 +41,17 @@ From source:
     % meson compile -C build
     % sudo meson install -C build
 
+### Debian Package
+
+Build and install a `.deb` package (replaces `xfce4-systemload-plugin`):
+
+    % sudo apt install debhelper meson pkg-config libglib2.0-dev libgtk-3-dev \
+        libxfce4panel-2.0-dev libxfce4ui-2-dev libxfce4util-dev libxfconf-0-dev \
+        libgtop2-dev libupower-glib-dev
+    % cd xfce4-systemload-plugin-nvidia
+    % dpkg-buildpackage -us -uc -b
+    % sudo dpkg -i ../xfce4-systemload-plugin-nvidia_*.deb
+
 ## Usage
 
 1. Add the "System Load Monitor" plugin to your Xfce panel
