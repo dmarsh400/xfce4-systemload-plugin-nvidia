@@ -15,6 +15,9 @@ Build-Depends:
  libgtop2-dev,
  libupower-glib-dev,
 Standards-Version: 4.6.2
+Homepage: https://github.com/dmarsh400/xfce4-systemload-plugin-nvidia
+Vcs-Browser: https://github.com/dmarsh400/xfce4-systemload-plugin-nvidia
+Vcs-Git: https://github.com/dmarsh400/xfce4-systemload-plugin-nvidia.git
 
 Package: xfce4-systemload-plugin-nvidia
 Architecture: any
