@@ -53,6 +53,9 @@ static const gchar *const DEFAULT_LABEL[] = {
     "gpu1",
     "vram0",
     "vram1",
+    "ctemp",
+    "gtemp",
+    "gpwr",
 };
 
 static const gchar *const DEFAULT_COLOR[] = {
@@ -64,6 +67,9 @@ static const gchar *const DEFAULT_COLOR[] = {
     "#613583", /* GPU1 */
     "#8b0000", /* VRAM0 */
     "#4b0082", /* VRAM1 */
+    "#e01b24", /* CPUTEMP */
+    "#ff7800", /* GPUTEMP */
+    "#c64600", /* GPUPOWER */
 };
 
 
@@ -101,7 +107,7 @@ struct _SystemloadConfig {
     bool           use_label;
     gchar         *label;
     GdkRGBA        color;
-  } monitor[8];
+  } monitor[11];
 };
 
 enum SystemloadProperty {
@@ -143,6 +149,18 @@ enum SystemloadProperty {
     PROP_VRAM1_USE_LABEL,
     PROP_VRAM1_LABEL,
     PROP_VRAM1_COLOR,
+    PROP_CPUTEMP_ENABLED,
+    PROP_CPUTEMP_USE_LABEL,
+    PROP_CPUTEMP_LABEL,
+    PROP_CPUTEMP_COLOR,
+    PROP_GPUTEMP_ENABLED,
+    PROP_GPUTEMP_USE_LABEL,
+    PROP_GPUTEMP_LABEL,
+    PROP_GPUTEMP_COLOR,
+    PROP_GPUPOWER_ENABLED,
+    PROP_GPUPOWER_USE_LABEL,
+    PROP_GPUPOWER_LABEL,
+    PROP_GPUPOWER_COLOR,
     N_PROPERTIES,
 };
 
@@ -198,6 +216,21 @@ prop2monitor (SystemloadProperty p)
     case PROP_VRAM1_LABEL:
     case PROP_VRAM1_COLOR:
       return VRAM1_MONITOR;
+    case PROP_CPUTEMP_ENABLED:
+    case PROP_CPUTEMP_USE_LABEL:
+    case PROP_CPUTEMP_LABEL:
+    case PROP_CPUTEMP_COLOR:
+      return CPUTEMP_MONITOR;
+    case PROP_GPUTEMP_ENABLED:
+    case PROP_GPUTEMP_USE_LABEL:
+    case PROP_GPUTEMP_LABEL:
+    case PROP_GPUTEMP_COLOR:
+      return GPUTEMP_MONITOR;
+    case PROP_GPUPOWER_ENABLED:
+    case PROP_GPUPOWER_USE_LABEL:
+    case PROP_GPUPOWER_LABEL:
+    case PROP_GPUPOWER_COLOR:
+      return GPUPOWER_MONITOR;
     default:
       /* Ideally, this codepath is never reached */
       return CPU_MONITOR;
@@ -485,6 +518,81 @@ systemload_config_class_init (SystemloadConfigClass *klass)
                                                        GDK_TYPE_RGBA,
                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
+  g_object_class_install_property (gobject_class,
+                                   PROP_CPUTEMP_ENABLED,
+                                   g_param_spec_boolean ("cputemp-enabled", NULL, NULL,
+                                                         FALSE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_CPUTEMP_USE_LABEL,
+                                   g_param_spec_boolean ("cputemp-use-label", NULL, NULL,
+                                                         TRUE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_CPUTEMP_LABEL,
+                                   g_param_spec_string ("cputemp-label", NULL, NULL,
+                                                        DEFAULT_LABEL[CPUTEMP_MONITOR],
+                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_CPUTEMP_COLOR,
+                                   g_param_spec_boxed ("cputemp-color",
+                                                       NULL, NULL,
+                                                       GDK_TYPE_RGBA,
+                                                       GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUTEMP_ENABLED,
+                                   g_param_spec_boolean ("gputemp-enabled", NULL, NULL,
+                                                         FALSE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUTEMP_USE_LABEL,
+                                   g_param_spec_boolean ("gputemp-use-label", NULL, NULL,
+                                                         TRUE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUTEMP_LABEL,
+                                   g_param_spec_string ("gputemp-label", NULL, NULL,
+                                                        DEFAULT_LABEL[GPUTEMP_MONITOR],
+                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUTEMP_COLOR,
+                                   g_param_spec_boxed ("gputemp-color",
+                                                       NULL, NULL,
+                                                       GDK_TYPE_RGBA,
+                                                       GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUPOWER_ENABLED,
+                                   g_param_spec_boolean ("gpupower-enabled", NULL, NULL,
+                                                         FALSE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUPOWER_USE_LABEL,
+                                   g_param_spec_boolean ("gpupower-use-label", NULL, NULL,
+                                                         TRUE,
+                                                         GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUPOWER_LABEL,
+                                   g_param_spec_string ("gpupower-label", NULL, NULL,
+                                                        DEFAULT_LABEL[GPUPOWER_MONITOR],
+                                                        GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_GPUPOWER_COLOR,
+                                   g_param_spec_boxed ("gpupower-color",
+                                                       NULL, NULL,
+                                                       GDK_TYPE_RGBA,
+                                                       GParamFlags (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
   systemload_config_signals[CONFIGURATION_CHANGED] =
     g_signal_new (g_intern_string ("configuration-changed"),
                   G_TYPE_FROM_CLASS (gobject_class),
@@ -572,6 +680,9 @@ systemload_config_get_property (GObject    *object,
     case PROP_GPU1_ENABLED:
     case PROP_VRAM0_ENABLED:
     case PROP_VRAM1_ENABLED:
+    case PROP_CPUTEMP_ENABLED:
+    case PROP_GPUTEMP_ENABLED:
+    case PROP_GPUPOWER_ENABLED:
       g_value_set_boolean (value, config->monitor[prop2monitor(prop_id)].enabled);
       break;
 
@@ -583,6 +694,9 @@ systemload_config_get_property (GObject    *object,
     case PROP_GPU1_USE_LABEL:
     case PROP_VRAM0_USE_LABEL:
     case PROP_VRAM1_USE_LABEL:
+    case PROP_CPUTEMP_USE_LABEL:
+    case PROP_GPUTEMP_USE_LABEL:
+    case PROP_GPUPOWER_USE_LABEL:
       g_value_set_boolean (value, config->monitor[prop2monitor(prop_id)].use_label);
       break;
 
@@ -594,6 +708,9 @@ systemload_config_get_property (GObject    *object,
     case PROP_GPU1_LABEL:
     case PROP_VRAM0_LABEL:
     case PROP_VRAM1_LABEL:
+    case PROP_CPUTEMP_LABEL:
+    case PROP_GPUTEMP_LABEL:
+    case PROP_GPUPOWER_LABEL:
       g_value_set_string (value, config->monitor[prop2monitor(prop_id)].label);
       break;
 
@@ -605,6 +722,9 @@ systemload_config_get_property (GObject    *object,
     case PROP_GPU1_COLOR:
     case PROP_VRAM0_COLOR:
     case PROP_VRAM1_COLOR:
+    case PROP_CPUTEMP_COLOR:
+    case PROP_GPUTEMP_COLOR:
+    case PROP_GPUPOWER_COLOR:
       g_value_set_boxed (value, &config->monitor[prop2monitor(prop_id)].color);
       break;
 
@@ -1042,6 +1162,132 @@ systemload_config_set_property (GObject      *object,
       g_boxed_free (GDK_TYPE_RGBA, val_rgba);
       break;
 
+    case PROP_CPUTEMP_ENABLED:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[CPUTEMP_MONITOR].enabled != val_bool)
+        {
+          config->monitor[CPUTEMP_MONITOR].enabled = val_bool;
+          g_object_notify (G_OBJECT (config), "cputemp-enabled");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_CPUTEMP_USE_LABEL:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[CPUTEMP_MONITOR].use_label != val_bool)
+        {
+          config->monitor[CPUTEMP_MONITOR].use_label = val_bool;
+          g_object_notify (G_OBJECT (config), "cputemp-use-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_CPUTEMP_LABEL:
+      val_string = g_value_get_string (value);
+      if (g_strcmp0 (config->monitor[CPUTEMP_MONITOR].label, val_string) != 0)
+        {
+          g_free (config->monitor[CPUTEMP_MONITOR].label);
+          config->monitor[CPUTEMP_MONITOR].label = g_value_dup_string (value);
+          g_object_notify (G_OBJECT (config), "cputemp-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_CPUTEMP_COLOR:
+      val_rgba = (GdkRGBA*) g_value_dup_boxed (value);
+      if (!rgba_equal (config->monitor[CPUTEMP_MONITOR].color, *val_rgba))
+        {
+          config->monitor[CPUTEMP_MONITOR].color = *val_rgba;
+          g_object_notify (G_OBJECT (config), "cputemp-color");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      g_boxed_free (GDK_TYPE_RGBA, val_rgba);
+      break;
+
+    case PROP_GPUTEMP_ENABLED:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[GPUTEMP_MONITOR].enabled != val_bool)
+        {
+          config->monitor[GPUTEMP_MONITOR].enabled = val_bool;
+          g_object_notify (G_OBJECT (config), "gputemp-enabled");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUTEMP_USE_LABEL:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[GPUTEMP_MONITOR].use_label != val_bool)
+        {
+          config->monitor[GPUTEMP_MONITOR].use_label = val_bool;
+          g_object_notify (G_OBJECT (config), "gputemp-use-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUTEMP_LABEL:
+      val_string = g_value_get_string (value);
+      if (g_strcmp0 (config->monitor[GPUTEMP_MONITOR].label, val_string) != 0)
+        {
+          g_free (config->monitor[GPUTEMP_MONITOR].label);
+          config->monitor[GPUTEMP_MONITOR].label = g_value_dup_string (value);
+          g_object_notify (G_OBJECT (config), "gputemp-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUTEMP_COLOR:
+      val_rgba = (GdkRGBA*) g_value_dup_boxed (value);
+      if (!rgba_equal (config->monitor[GPUTEMP_MONITOR].color, *val_rgba))
+        {
+          config->monitor[GPUTEMP_MONITOR].color = *val_rgba;
+          g_object_notify (G_OBJECT (config), "gputemp-color");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      g_boxed_free (GDK_TYPE_RGBA, val_rgba);
+      break;
+
+    case PROP_GPUPOWER_ENABLED:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[GPUPOWER_MONITOR].enabled != val_bool)
+        {
+          config->monitor[GPUPOWER_MONITOR].enabled = val_bool;
+          g_object_notify (G_OBJECT (config), "gpupower-enabled");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUPOWER_USE_LABEL:
+      val_bool = g_value_get_boolean (value);
+      if (config->monitor[GPUPOWER_MONITOR].use_label != val_bool)
+        {
+          config->monitor[GPUPOWER_MONITOR].use_label = val_bool;
+          g_object_notify (G_OBJECT (config), "gpupower-use-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUPOWER_LABEL:
+      val_string = g_value_get_string (value);
+      if (g_strcmp0 (config->monitor[GPUPOWER_MONITOR].label, val_string) != 0)
+        {
+          g_free (config->monitor[GPUPOWER_MONITOR].label);
+          config->monitor[GPUPOWER_MONITOR].label = g_value_dup_string (value);
+          g_object_notify (G_OBJECT (config), "gpupower-label");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      break;
+
+    case PROP_GPUPOWER_COLOR:
+      val_rgba = (GdkRGBA*) g_value_dup_boxed (value);
+      if (!rgba_equal (config->monitor[GPUPOWER_MONITOR].color, *val_rgba))
+        {
+          config->monitor[GPUPOWER_MONITOR].color = *val_rgba;
+          g_object_notify (G_OBJECT (config), "gpupower-color");
+          g_signal_emit (G_OBJECT (config), systemload_config_signals [CONFIGURATION_CHANGED], 0);
+        }
+      g_boxed_free (GDK_TYPE_RGBA, val_rgba);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1295,6 +1541,54 @@ systemload_config_new (const gchar *property_base)
 
       property = g_strconcat (property_base, "/vram1/color", NULL);
       xfconf_g_property_bind_gdkrgba (channel, property, config, "vram1-color");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/cputemp/enabled", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "cputemp-enabled");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/cputemp/use-label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "cputemp-use-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/cputemp/label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_STRING, config, "cputemp-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/cputemp/color", NULL);
+      xfconf_g_property_bind_gdkrgba (channel, property, config, "cputemp-color");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gputemp/enabled", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "gputemp-enabled");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gputemp/use-label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "gputemp-use-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gputemp/label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_STRING, config, "gputemp-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gputemp/color", NULL);
+      xfconf_g_property_bind_gdkrgba (channel, property, config, "gputemp-color");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gpupower/enabled", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "gpupower-enabled");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gpupower/use-label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_BOOLEAN, config, "gpupower-use-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gpupower/label", NULL);
+      xfconf_g_property_bind (channel, property, G_TYPE_STRING, config, "gpupower-label");
+      g_free (property);
+
+      property = g_strconcat (property_base, "/gpupower/color", NULL);
+      xfconf_g_property_bind_gdkrgba (channel, property, config, "gpupower-color");
       g_free (property);
     }
 

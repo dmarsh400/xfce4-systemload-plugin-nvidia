@@ -32,5 +32,6 @@
 #include <glib.h>
 
 gulong read_cpuload();
+gulong read_cputemp();
 
 #endif /* _XFCE_SYSTEMLOAD_CPU_H_ */

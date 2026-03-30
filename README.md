@@ -14,6 +14,9 @@ xfce4-systemload-plugin displays current CPU load, memory in use, network utiliz
 - **System Uptime**: Show system uptime
 - **GPU Monitoring**: Real-time Nvidia GPU utilization (GPU0/GPU1) via nvidia-smi
 - **VRAM Monitoring**: Real-time Nvidia GPU memory usage (VRAM0/VRAM1) via nvidia-smi
+- **CPU Temperature**: CPU package temperature via sysfs
+- **GPU Temperature**: Nvidia GPU temperature via nvidia-smi
+- **GPU Power**: Nvidia GPU power draw in watts via nvidia-smi
 
 ## GPU Support
 
@@ -21,10 +24,11 @@ This enhanced version includes integrated GPU monitoring for Nvidia GPUs using n
 
 - **GPU0/GPU1 Support**: Monitor multiple Nvidia GPUs simultaneously
 - **VRAM0/VRAM1 Support**: Monitor VRAM usage for multiple Nvidia GPUs
-- **nvidia-smi Integration**: Uses `nvidia-smi --query-gpu=utilization.gpu` and `nvidia-smi --query-gpu=memory.used,memory.total` for accurate readings
-- **Real-time Updates**: Live GPU utilization and VRAM usage tracking
-- **Configurable**: Enable/disable individual GPU and VRAM monitors
+- **nvidia-smi Integration**: Uses `nvidia-smi --query-gpu=utilization.gpu`, `memory.used,memory.total`, `temperature.gpu`, and `power.draw` for accurate readings
+- **Real-time Updates**: Live GPU utilization, VRAM, temperature, and power tracking
+- **Configurable**: Enable/disable individual GPU, VRAM, temperature, and power monitors
 - **Visual Indicators**: Distinct colors for each GPU (GPU0: dark red, GPU1: purple) and VRAM (VRAM0: dark red, VRAM1: dark purple)
+- **Numeric Displays**: Temperature and power shown as text values (e.g., 48°C, 165W) directly in the panel
 
 ### Requirements for GPU Monitoring
 
@@ -41,16 +45,27 @@ From source:
     % meson compile -C build
     % sudo meson install -C build
 
+### Debian Package
+
+Build and install a `.deb` package (replaces `xfce4-systemload-plugin`):
+
+    % sudo apt install debhelper meson pkg-config libglib2.0-dev libgtk-3-dev \
+        libxfce4panel-2.0-dev libxfce4ui-2-dev libxfce4util-dev libxfconf-0-dev \
+        libgtop2-dev libupower-glib-dev
+    % cd xfce4-systemload-plugin-nvidia
+    % dpkg-buildpackage -us -uc -b
+    % sudo dpkg -i ../xfce4-systemload-plugin-nvidia_*.deb
+
 ## Usage
 
 1. Add the "System Load Monitor" plugin to your Xfce panel
 2. Right-click the plugin → Properties to configure which monitors to display
-3. Enable GPU0/GPU1 and VRAM0/VRAM1 monitoring as desired
+3. Enable GPU0/GPU1, VRAM0/VRAM1, CPU temp, GPU temp, and GPU power as desired
 4. Customize colors and labels for each monitor type
 
 ## Configuration
 
-- **Monitor Selection**: Enable/disable CPU, Memory, Network, Swap, GPU0, GPU1, VRAM0, VRAM1
+- **Monitor Selection**: Enable/disable CPU, Memory, Network, Swap, GPU0, GPU1, VRAM0, VRAM1, CPU Temp, GPU Temp, GPU Power
 - **Colors**: Customize colors for each monitor type
 - **Labels**: Show/hide text labels for each monitor
 - **Update Interval**: Adjust refresh rate (default: 500ms)

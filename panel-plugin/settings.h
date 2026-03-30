@@ -35,6 +35,9 @@ enum SystemloadMonitor {
     GPU1_MONITOR,
     VRAM0_MONITOR,
     VRAM1_MONITOR,
+    CPUTEMP_MONITOR,
+    GPUTEMP_MONITOR,
+    GPUPOWER_MONITOR,
 };
 
 typedef struct _SystemloadConfigClass SystemloadConfigClass;
