@@ -9,6 +9,20 @@ Copyright: David Schneider <dnschneid@gmail.com>
            Riccardo Persichetti <riccardo.persichetti@tin.it>
 License: BSD-2-Clause
 
+Files: panel-plugin/settings.cc panel-plugin/settings.h
+Copyright: 2021 Simon Steinbeiss <simon@xfce.org>
+           2022 Jan Ziak <0xe2.0x9a.0x9b@xfce.org>
+License: GPL-2.0-or-later
+
+License: GPL-2.0-or-later
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in /usr/share/common-licenses/GPL-2.
+
 License: BSD-2-Clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
