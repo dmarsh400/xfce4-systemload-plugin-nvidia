@@ -342,3 +342,19 @@ gulong read_cpuload()
 #else
 #error "Your platform is not yet supported"
 #endif
+
+gulong read_cputemp()
+{
+#if defined(__linux__) || defined(__FreeBSD_kernel__)
+    FILE *fd = fopen("/sys/class/thermal/thermal_zone0/temp", "r");
+    if (!fd)
+        return 0;
+    gulong temp_millideg = 0;
+    if (fscanf(fd, "%lu", &temp_millideg) != 1)
+        temp_millideg = 0;
+    fclose(fd);
+    return temp_millideg / 1000;
+#else
+    return 0;
+#endif
+}

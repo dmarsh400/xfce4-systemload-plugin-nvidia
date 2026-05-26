@@ -96,7 +96,7 @@ struct t_global_monitor {
     bool              use_timeout_seconds;
     guint             timeout_id;
     t_command         command;
-    t_monitor         *monitor[8];
+    t_monitor         *monitor[11];
     t_uptime_monitor  uptime;
 #ifdef HAVE_UPOWER_GLIB
     UpClient          *upower;
@@ -114,7 +114,16 @@ static const SystemloadMonitor VISUAL_ORDER[] = {
     GPU1_MONITOR,
     VRAM0_MONITOR,
     VRAM1_MONITOR,
+    CPUTEMP_MONITOR,
+    GPUTEMP_MONITOR,
+    GPUPOWER_MONITOR,
 };
+
+static bool
+is_text_monitor(SystemloadMonitor m)
+{
+    return m == CPUTEMP_MONITOR || m == GPUTEMP_MONITOR || m == GPUPOWER_MONITOR;
+}
 
 static gboolean setup_monitor_cb(gpointer user_data);
 
@@ -189,6 +198,27 @@ set_tooltip(GtkWidget *w, const gchar *caption)
 }
 
 static void
+update_text_monitor(t_global_monitor *global, SystemloadMonitor monitor,
+                    gulong value, const gchar *unit, const gchar *tooltip_prefix)
+{
+    const SystemloadConfig *config = global->config;
+    global->monitor[monitor]->value_read = value;
+
+    gchar text[64];
+    const gchar *prefix = systemload_config_get_label(config, monitor);
+    bool show_prefix = systemload_config_get_use_label(config, monitor) && strlen(prefix) > 0;
+    if (show_prefix)
+        g_snprintf(text, sizeof(text), "%s %ld%s", prefix, value, unit);
+    else
+        g_snprintf(text, sizeof(text), "%ld%s", value, unit);
+    set_label_text(GTK_LABEL(global->monitor[monitor]->label), text);
+
+    gchar tooltip[128];
+    g_snprintf(tooltip, sizeof(tooltip), "%s: %ld%s", tooltip_prefix, value, unit);
+    set_tooltip(global->monitor[monitor]->ebox, tooltip);
+}
+
+static void
 update_monitors(t_global_monitor *global)
 {
     const SystemloadConfig *config = global->config;
@@ -223,6 +253,12 @@ update_monitors(t_global_monitor *global)
         global->monitor[VRAM0_MONITOR]->value_read = read_vram0usage();
     if (systemload_config_get_enabled (config, VRAM1_MONITOR))
         global->monitor[VRAM1_MONITOR]->value_read = read_vram1usage();
+    if (systemload_config_get_enabled (config, CPUTEMP_MONITOR))
+        update_text_monitor(global, CPUTEMP_MONITOR, read_cputemp(), "\302\260C", _("CPU Temperature"));
+    if (systemload_config_get_enabled (config, GPUTEMP_MONITOR))
+        update_text_monitor(global, GPUTEMP_MONITOR, read_gpu0temp(), "\302\260C", _("GPU Temperature"));
+    if (systemload_config_get_enabled (config, GPUPOWER_MONITOR))
+        update_text_monitor(global, GPUPOWER_MONITOR, read_gpu0power(), "W", _("GPU Power"));
     if (systemload_config_get_uptime_enabled (config))
         global->uptime.value_read = read_uptime();
 
@@ -231,7 +267,7 @@ update_monitors(t_global_monitor *global)
         const auto monitor = (SystemloadMonitor) i;
         t_monitor *m = global->monitor[monitor];
 
-        if (systemload_config_get_enabled (config, monitor))
+        if (systemload_config_get_enabled (config, monitor) && !is_text_monitor(monitor))
         {
             gulong value = MIN(m->value_read, 100);
             set_fraction(GTK_PROGRESS_BAR(global->monitor[i]->status), value / 100.0);
@@ -546,8 +582,9 @@ setup_monitors(t_global_monitor *global)
         auto monitor = (SystemloadMonitor) i;
         if (systemload_config_get_enabled (config, monitor))
         {
-            bool label_visible = systemload_config_get_use_label (config, monitor) &&
-                                 strlen (systemload_config_get_label (config, monitor)) != 0;
+            bool label_visible = is_text_monitor(monitor) ||
+                                 (systemload_config_get_use_label (config, monitor) &&
+                                  strlen (systemload_config_get_label (config, monitor)) != 0);
             n_enabled++;
             n_enabled_labels += (label_visible ? 1 : 0);
         }
@@ -579,11 +616,20 @@ setup_monitors(t_global_monitor *global)
 
         if (systemload_config_get_enabled (config, monitor))
         {
-            bool label_visible = systemload_config_get_use_label (config, monitor) &&
-                                 strlen (systemload_config_get_label (config, monitor)) != 0;
-
             gtk_widget_show_all(GTK_WIDGET(m->ebox));
-            gtk_widget_set_visible (m->label, label_visible);
+
+            if (is_text_monitor(monitor))
+            {
+                gtk_widget_show(m->label);
+                gtk_widget_hide(m->status);
+            }
+            else
+            {
+                bool label_visible = systemload_config_get_use_label (config, monitor) &&
+                                     strlen (systemload_config_get_label (config, monitor)) != 0;
+                gtk_widget_set_visible (m->label, label_visible);
+            }
+
             set_margin (global, m->ebox, (n_enabled_labels == 0) ? 0 : 6);
         }
     }
@@ -835,6 +881,9 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
             N_ ("GPU1 monitor"),
             N_ ("VRAM0 monitor"),
             N_ ("VRAM1 monitor"),
+            N_ ("CPU temp"),
+            N_ ("GPU temp"),
+            N_ ("GPU power"),
             N_ ("Uptime monitor")
     };
     static const gchar *SETTING_TEXT[] = {
@@ -845,7 +894,10 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
             "gpu0",
             "gpu1",
             "vram0",
-            "vram1"
+            "vram1",
+            "cputemp",
+            "gputemp",
+            "gpupower"
     };
 
     GtkWidget *dlg;
@@ -936,13 +988,13 @@ monitor_create_options(XfcePanelPlugin *plugin, t_global_monitor *global)
         const SystemloadMonitor monitor = VISUAL_ORDER[i];
         new_monitor_setting (global, GTK_GRID(grid), 4 + 2 * i,
                              _(FRAME_TEXT[monitor]),
-                             true,
+                             !is_text_monitor(monitor),
                              SETTING_TEXT[monitor]);
     }
 
     /* Uptime monitor options */
     new_monitor_setting (global, GTK_GRID(grid), 4 + 2*G_N_ELEMENTS (global->monitor),
-                         _(FRAME_TEXT[8]), FALSE, "uptime");
+                         _(FRAME_TEXT[11]), FALSE, "uptime");
 
     gtk_widget_show_all (dlg);
 }

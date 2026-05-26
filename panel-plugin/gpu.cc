@@ -76,12 +76,12 @@ gulong read_vram1usage()
 {
     /* Use nvidia-smi for Nvidia VRAM monitoring */
     const char *command = "nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null";
-    
+
     FILE *fp = popen(command, "r");
     if (!fp) {
         return 0;
     }
-    
+
     char buffer[256];
     gulong usage = 0;
     int gpu_count = 0;
@@ -97,4 +97,40 @@ gulong read_vram1usage()
     }
     pclose(fp);
     return usage;
+}
+
+gulong read_gpu0temp()
+{
+    const char *command = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null";
+
+    FILE *fp = popen(command, "r");
+    if (!fp) {
+        return 0;
+    }
+
+    char buffer[256];
+    gulong temp = 0;
+    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        temp = atoi(buffer);
+    }
+    pclose(fp);
+    return temp;
+}
+
+gulong read_gpu0power()
+{
+    const char *command = "nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits 2>/dev/null";
+
+    FILE *fp = popen(command, "r");
+    if (!fp) {
+        return 0;
+    }
+
+    char buffer[256];
+    gulong power = 0;
+    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        power = (gulong)(atof(buffer) + 0.5);
+    }
+    pclose(fp);
+    return power;
 }
